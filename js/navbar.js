@@ -62,6 +62,20 @@
       nav.appendChild(grp);
     });
 
+    /* ── Inject manifest link if missing ──────────────────── */
+    if (!document.querySelector('link[rel="manifest"]')) {
+      const mLink = document.createElement('link');
+      mLink.rel  = 'manifest';
+      mLink.href = r('manifest.json');
+      document.head.appendChild(mLink);
+    }
+
+    /* ── Register service worker if missing ───────────────── */
+    if ('serviceWorker' in navigator && !navigator._swRegistered) {
+      navigator._swRegistered = true;
+      navigator.serviceWorker.register(r('sw.js')).catch(() => {});
+    }
+
     /* ── Build sidebar footer / PWA install ───────────────── */
     const footer = sidebar.querySelector('#ds-footer');
     const installBtn = document.createElement('button');
@@ -71,37 +85,50 @@
     installBtn.style.display = 'none';
     footer.appendChild(installBtn);
 
+    const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    const isInStandaloneMode = ('standalone' in navigator && navigator.standalone) ||
+                               window.matchMedia('(display-mode: standalone)').matches;
+
     let _deferredPrompt = null;
+
+    function hideInstallBtns() {
+      installBtn.style.display = 'none';
+      const t = document.getElementById('btn-install-top');
+      if (t) t.style.display = 'none';
+    }
+
+    function triggerInstall() {
+      if (_deferredPrompt) {
+        _deferredPrompt.prompt();
+        _deferredPrompt.userChoice.then(({ outcome }) => {
+          if (outcome === 'accepted') hideInstallBtns();
+          _deferredPrompt = null;
+        });
+      } else if (isIOS) {
+        if (window.showDashToast) showDashToast('Tap Share then "Add to Home Screen" to install', 'info', 5000);
+      } else {
+        if (window.showDashToast) showDashToast('Open in Chrome / Edge / Safari to install', 'info', 4000);
+      }
+    }
+
     window.addEventListener('beforeinstallprompt', e => {
       e.preventDefault();
       _deferredPrompt = e;
-      installBtn.style.display = 'flex';
     });
+
     window.addEventListener('appinstalled', () => {
-      installBtn.style.display = 'none';
-      const topBtn = document.getElementById('btn-install-top');
-      if (topBtn) topBtn.style.display = 'none';
+      hideInstallBtns();
       _deferredPrompt = null;
-      if (window.showDashToast) showDashToast('✅ App installed!', 'success', 3000);
+      if (window.showDashToast) showDashToast('App installed!', 'success', 3000);
     });
-    installBtn.onclick = async () => {
-      if (!_deferredPrompt) {
-        if (window.showDashToast) showDashToast('Open in browser (not in-app) to install', 'info', 3500);
-        return;
-      }
-      _deferredPrompt.prompt();
-      const { outcome } = await _deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        installBtn.style.display = 'none';
-        const topBtn = document.getElementById('btn-install-top');
-        if (topBtn) topBtn.style.display = 'none';
-      }
-      _deferredPrompt = null;
-    };
+
+    installBtn.onclick = triggerInstall;
+
     const topInstallBtn = document.getElementById('btn-install-top');
-    if (topInstallBtn) {
-      topInstallBtn.onclick = () => installBtn.click();
-    }
+    if (topInstallBtn) topInstallBtn.onclick = triggerInstall;
+
+    /* Hide both buttons if already running as installed PWA */
+    if (isInStandaloneMode) hideInstallBtns();
 
     /* ── Build topbar ─────────────────────────────────────── */
     const topbar   = document.createElement('div');

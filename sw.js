@@ -1,47 +1,40 @@
-/* Minimal service worker — caches the app shell so the editor opens instantly
-   and works offline once installed. Adjust the CACHE_NAME version number
-   whenever you deploy changes to force-refresh cached files. */
-
-const CACHE_NAME = 'poster-studio-v1';
+const CACHE_NAME = 'mango-poster-v2';
 const APP_SHELL = [
-  './poster/custom.html',
+  './index.html',
   './css/base.css',
   './js/shared.js',
   './js/navbar.js',
   './assets/logo.png',
-  './assets/logo2.png'
+  './assets/logo2.png',
+  './manifest.json'
 ];
 
-self.addEventListener('install', (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)).catch(() => {
-      /* If a listed file is missing/renamed, don't block install — cache what succeeds */
-    })
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(c => c.addAll(APP_SHELL)).catch(() => {})
   );
   self.skipWaiting();
 });
 
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((names) =>
-      Promise.all(names.filter((n) => n !== CACHE_NAME).map((n) => caches.delete(n)))
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(names =>
+      Promise.all(names.filter(n => n !== CACHE_NAME).map(n => caches.delete(n)))
     )
   );
   self.clients.claim();
 });
 
-self.addEventListener('fetch', (event) => {
-  if (event.request.method !== 'GET') return;
-  event.respondWith(
-    caches.match(event.request).then((cached) => {
+self.addEventListener('fetch', e => {
+  if (e.request.method !== 'GET') return;
+  e.respondWith(
+    caches.match(e.request).then(cached => {
       if (cached) return cached;
-      return fetch(event.request).then((response) => {
-        /* Cache new same-origin requests as the user browses, so repeat visits work offline too */
-        if (response.ok && event.request.url.startsWith(self.location.origin)) {
-          const copy = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+      return fetch(e.request).then(res => {
+        if (res.ok && e.request.url.startsWith(self.location.origin)) {
+          caches.open(CACHE_NAME).then(c => c.put(e.request, res.clone()));
         }
-        return response;
+        return res;
       }).catch(() => cached);
     })
   );
