@@ -1,0 +1,25 @@
+{
+  "name": "Poster Studio Pro",
+  "short_name": "Poster Studio",
+  "description": "Bilingual poster & price-tag design suite for hypermarket, restaurant, and offer posters.",
+  "start_url": "./poster/custom.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d1420",
+  "theme_color": "#0d1420",
+  "icons": [
+    {
+      "src": "./assets/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./assets/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
