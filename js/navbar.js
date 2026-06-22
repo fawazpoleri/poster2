@@ -66,14 +66,18 @@
     if (!document.querySelector('link[rel="manifest"]')) {
       const mLink = document.createElement('link');
       mLink.rel  = 'manifest';
-      mLink.href = r('manifest.json');
+      /* GitHub Pages serves from /repo-name/ subpath — pass base via query param
+         so the SW and manifest can use the correct scope dynamically */
+      mLink.href = r('manifest.json') + '?base=' + encodeURIComponent(base);
       document.head.appendChild(mLink);
     }
 
     /* ── Register service worker if missing ───────────────── */
     if ('serviceWorker' in navigator && !navigator._swRegistered) {
       navigator._swRegistered = true;
-      navigator.serviceWorker.register(r('sw.js')).catch(() => {});
+      /* scope must match the base path (works for both root and /repo-name/) */
+      navigator.serviceWorker.register(r('sw.js'), { scope: base })
+        .catch(() => {});
     }
 
     /* ── Build sidebar footer / PWA install ───────────────── */
