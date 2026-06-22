@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>A6 Print Poster - Full Light Edition</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="../css/base.css">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+@page { size: 148mm 105mm landscape; margin: 0; }
+
+:root {
+  --primary-brand: #1e293b; /* Deep Premium Slate */
+  --accent-gold:   #da3030; /* Clean Accenting Gold */
+  --bg-surface:    #f0ebd6; /* Pure Clean White */
+  --dark-text:     #0f172a; /* Ultra Dark text for crisp contrast */
+  --light-gray:    #f8fafc; /* Soft gray structure elements */
+  --header-bg:     #f1aa7a; /* Modern Light Gray Header Background */
+  --border-color:  #e2e8f0; /* Crisp subtle lines */
+  --card-w: 148mm;
+  --card-h: 105mm;
+}
+
+body {
+  margin: 0;
+  background: #e2e8f0;
+  font-family: 'Barlow Condensed', sans-serif;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* ── TOP BAR ── */
+.top-bar {
+  width: calc(var(--card-w) + 20mm);
+  margin: 10px auto 0;
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 8mm;
+}
+.btn-print {
+  background: var(--primary-brand);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 20px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+}
+
+/* ── PAGE ── */
+.page {
+  width: calc(var(--card-w) + 20mm);
+  margin: 8px auto 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8mm;
+  padding: 8mm;
+}
+
+/* ── CARD ── */
+.card {
+  width: var(--card-w);
+  height: var(--card-h);
+  position: relative;
+  overflow: visible;
+  border-radius: 3mm;
+  background: var(--bg-surface);
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 4px 20px rgba(15, 23, 42, 0.15), 0 1px 3px rgba(15, 23, 42, 0.08);
+  border: 0.4mm solid var(--border-color);
+}
+.card.has-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 3mm;
+  background: rgba(255, 255, 255, 0.55);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* clip noise */
+.card-clip { position:absolute; inset:0; border-radius:3mm; overflow:hidden; pointer-events:none; z-index:10; }
+.card-clip::after {
+  content:'';
+  position:absolute; inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='.02'/%3E%3C/svg%3E");
+}
+
+/* ── INNER GRID ── */
+.card-inner {
+  position:relative; z-index:2;
+  width:100%; height:100%;
+  display:grid;
+  grid-template-columns: 1fr 50mm;
+  grid-template-rows: 18mm 1.2mm 1fr;
+  border-radius:3mm; overflow:hidden;
+}
+
+/* ── TOP BAND (LIGHT THEME) ── */
+.top-band {
+  grid-column: 1 / -1;
+  background: var(--header-bg);
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 0 6mm;
+  border-bottom: .3mm solid var(--border-color);
+}
+.brand-logo { height:14mm; width:auto; object-fit:contain; display:block; }
+.brand-tag   { font-size:8pt; font-weight: 700; color: #64748b; letter-spacing:2px; text-transform:uppercase; }
+
+.gold-rule {
+  grid-column: 1 / -1;
+  background: linear-gradient(90deg, #a07820 0%, var(--accent-gold) 30%, #f5e090 50%, var(--accent-gold) 70%, #a07820 100%);
+  height: 1.2mm;
+}
+
+/* ── LEFT ── */
+.left { padding:4mm 4mm 8mm 5mm; display:flex; flex-direction:column; justify-content:space-between; }
+
+
+
+
+.name-en { font-size:26pt; font-weight:900; color:var(--dark-text); text-transform:uppercase; letter-spacing:0.5px; line-height:.95; padding-top:1mm; }
+.name-sep { display:flex; align-items:center; gap:2mm; margin:2.5mm 0; }
+.name-sep .line { flex:1; height:.4mm; background: linear-gradient(90deg, var(--accent-gold), rgba(226,232,240,0.4)); }
+.name-sep .star { color:var(--accent-gold); font-size:8pt; }
+.name-ar { font-family:'Cairo',sans-serif; font-size:17pt; font-weight:900; color:var(--dark-text); line-height:1.1; margin-bottom:2mm; }
+
+.translate-status { font-family:'Barlow Condensed',sans-serif; font-size:7pt; color:rgba(148,163,184,1); min-height:10px; margin-top:1mm; transition:opacity .3s; }
+.translate-status.loading { color:var(--accent-gold); }
+.translate-status.done    { color:#16a34a; }
+
+/* Price box */
+.price-box {
+  background: var(--light-gray);
+  border-radius: 3mm;
+  padding: 3mm 4mm;
+  width: fit-content;
+  min-width: 44mm;
+  border: .5mm solid var(--primary-brand);
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 2mm 5mm rgba(15,23,42,.06);
+}
+.price-row { display:flex; align-items:flex-end; gap:1.5mm; line-height:1; }
+.price-num { font-size:36pt; font-weight:900; color:var(--primary-brand); line-height:.85; }
+.price-cur { font-size:14pt; font-weight:800; color:var(--accent-gold); padding-bottom:1mm; }
+.price-unit { font-size:7pt; color:#475569; font-weight:700; letter-spacing:.8px; text-transform:uppercase; margin-top:2mm; padding-top:1.5mm; border-top:.3mm solid var(--border-color); font-family:'Cairo',sans-serif; }
+
+/* ── RIGHT ── */
+.right {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2mm 3mm 9mm 0;
+  overflow: visible;
+  border-left: .3mm solid var(--border-color);
+}
+
+/* ── MADE-IN BADGE ── */
+.made-in-badge {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1mm;
+  padding: 2mm 2mm 1mm;
+  background: var(--light-gray);
+  border-radius: 2mm;
+  border: .3mm solid var(--border-color);
+}
+.made-in-flags {
+  display: flex;
+  align-items: center;
+  gap: 2.5mm;
+}
+.made-in-text-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .3mm;
+}
+.made-in-en {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: #334155;
+  line-height: 1;
+}
+.made-in-ar {
+  font-family: 'Cairo', sans-serif;
+  font-size: 7pt;
+  font-weight: 700;
+  color: #334155;
+  line-height: 1;
+  direction: rtl;
+}
+
+.product-img { max-width:100%; max-height:50mm; object-fit:contain; filter:drop-shadow(0 2mm 4mm rgba(15,23,42,.12)); pointer-events:none; flex:1; }
+
+/* ── IMAGE AREA ── */
+.img-area {
+  position: relative;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 2mm;
+  overflow: hidden;
+}
+.img-area:hover .img-area-overlay { opacity: 1; }
+.img-area:hover .product-img { opacity: .25; }
+.img-area-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5mm;
+  opacity: 0;
+  transition: opacity .18s;
+  pointer-events: none;
+  z-index: 3;
+}
+.img-area-icon { font-size: 16pt; line-height: 1; }
+.img-area-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 7.5pt;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--dark-text);
+  background: rgba(255,255,255,.9);
+  padding: 1mm 2.5mm;
+  border-radius: 1.5mm;
+  border: 1px solid var(--border-color);
+}
+.img-remove-btn {
+  position: absolute;
+  top: 2mm; right: 2mm;
+  width: 5mm; height: 5mm;
+  border-radius: 50%;
+  background: rgba(15,23,42,.85);
+  color: white;
+  border: none;
+  font-size: 7pt;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .15s;
+  z-index: 4;
+}
+.img-area:hover .img-remove-btn { opacity: 1; }
+
+/* BG buttons */
+.bg-upload-btn,
+.bg-remove-btn {
+  position: absolute;
+  top: 2.5mm; left: 2mm;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  background: rgba(30,41,59,.85);
+  color: #fff;
+  border: .3mm solid var(--accent-gold);
+  border-radius: 3px;
+  padding: 1.5px 5px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 6.5pt;
+  font-weight: 700;
+  letter-spacing: .4px;
+  cursor: pointer;
+  white-space: nowrap;
+  user-select: none;
+  z-index: 50;
+}
+.bg-upload-btn { top: 2.5mm; }
+.bg-remove-btn { top: 8mm; background: rgba(15,23,42,.6); border-color: var(--border-color); }
+.bg-upload-btn:hover { background: var(--primary-brand); }
+.bg-remove-btn:hover { background: #0f172a; }
+.file-input-hidden { display:none; }
+
+/* ── FOOTER STRIP ── */
+.footer-strip {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 7mm;
+  background: var(--primary-brand);
+  border-top: .5mm solid var(--accent-gold);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 3mm;
+  z-index: 5;
+  border-radius: 0 0 3mm 3mm;
+  gap: 2mm;
+}
+
+.footer-strip .footer-text,
+.footer-strip .flag {
+  display: none !important;
+}
+
+.footer-text { cursor:default; }
+
+/* ── REAL FLAG STYLING ── */
+.flag { 
+  width:9mm; height:6mm; 
+  position:relative; 
+  border:.2mm solid rgba(255,255,255,.2); 
+  overflow:hidden; flex-shrink:0; 
+  border-radius:.5mm; 
+  display:inline-block; 
+  vertical-align:middle;
+  background-size: cover;
+  background-position: center;
+}
+
+.badge-flag {
+  width: 7mm;
+  height: 4.5mm;
+  border-radius: .4mm;
+  border: .2mm solid rgba(0,0,0,.1);
+  background-size: cover;
+  background-position: center;
+  display: inline-block;
+  flex-shrink: 0;
+  box-shadow: 0 .5mm 1.5mm rgba(0,0,0,.1);
+}
+
+/* ── COUNTRY PICKER PANEL ── */
+.country-picker-wrap {
+  position: absolute;
+  bottom: 7mm;
+  left: 0; right: 0;
+  z-index: 200;
+  display: none;
+  justify-content: center;
+}
+.country-picker-wrap.open { display:flex; }
+
+.country-picker {
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 8px 32px rgba(15,23,42,.15);
+  width: 260px;
+  overflow: hidden;
+  font-family: 'Barlow Condensed', sans-serif;
+}
+.cp-search-row {
+  display:flex; align-items:center; gap:6px;
+  padding: 8px 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+.cp-search-row input {
+  flex:1; border:none; outline:none;
+  font-family:'Barlow Condensed',sans-serif; font-size:11pt; font-weight:600;
+  color:var(--dark-text);
+}
+.cp-search-row input::placeholder { color:#94a3b8; font-weight:400; }
+.cp-search-row .cp-close {
+  cursor:pointer; font-size:14pt; color:#94a3b8; line-height:1;
+  padding: 0 2px;
+}
+.cp-search-row .cp-close:hover { color:var(--dark-text); }
+.cp-list {
+  max-height: 220px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.cp-item {
+  display:flex; align-items:center; gap:10px;
+  padding: 8px 12px;
+  cursor:pointer;
+  transition: background .1s;
+  font-size:11pt; font-weight:600; color:var(--dark-text); letter-spacing:.3px;
+}
+.cp-item:hover { background:var(--light-gray); color:var(--accent-gold); }
+.cp-item .cp-flag-img { width: 24px; height: 16px; object-fit: cover; border: 1px solid var(--border-color); border-radius: 2px; }
+.cp-item .cp-name { flex:1; }
+.cp-item .cp-ar    { font-family:'Cairo',sans-serif; font-size:9pt; color:#64748b; margin-left:auto; direction:rtl; }
+
+.footer-change-btn {
+  display:inline-flex; align-items:center; gap:4px;
+  background: rgba(255,255,255,.1);
+  color:#fff; border:1px solid rgba(255,255,255,.2);
+  border-radius:4px; padding:2px 7px;
+  font-family:'Barlow Condensed',sans-serif; font-size:7.5pt; font-weight:700;
+  cursor:pointer; letter-spacing:.5px; user-select:none;
+  white-space:nowrap; backdrop-filter:blur(4px);
+}
+.footer-change-btn:hover { background:rgba(255,255,255,.2); border-color:var(--accent-gold); }
+
+/* ── PRINT ── */
+@media print {
+  html, body { background: none !important; margin: 0; padding: 0; }
+  .top-bar { display: none !important; }
+  .page {
+    margin: 0; padding: 0;
+    gap: 5mm;
+    background: none !important;
+    width: auto;
+    display: flex;
+    flex-direction: column;
+  }
+  .card {
+    box-shadow: none;
+    border: 0.3mm solid #cbd5e1;
+    margin: 0;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  .img-menu-wrap, .footer-change-btn, .country-picker-wrap, .translate-status,
+  .img-area-overlay, .img-remove-btn, .bg-upload-btn, .bg-remove-btn { display: none !important; }
+  .footer-strip { border-radius: 0; }
+}
+</style>
+</head>
+<body>
+
+
+<div class="page">
+
+  <div class="card" id="card1">
+    <div class="card-clip"></div>
+    <div class="card-inner">
+      <div class="top-band">
+        <img src="../assets/logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="brand-mark" style="display:none;align-items:baseline;gap:2mm;">
+          <span style="font-size:22pt;font-weight:900;color:var(--primary-brand);letter-spacing:2px;text-transform:uppercase;">MANGO</span>
+          <span style="font-size:22pt;font-weight:900;color:var(--accent-gold);letter-spacing:2px;text-transform:uppercase;">HYPER</span>
+        </div>
+        <span class="brand-tag">Quality Products</span>
+      </div>
+      <div class="gold-rule"></div>
+      <div class="left">
+        <div>
+          <div class="name-en" id="nameEn1" contenteditable="true">ITEM NAME</div>
+          <div class="name-sep"><div class="line"></div><div class="star">✦</div><div class="line"></div></div>
+          <div class="name-ar" id="nameAr1" contenteditable="true"> </div>
+          <div class="translate-status" id="ts1"></div>
+        </div>
+        <div class="price-box">
+          <div class="price-row">
+            <div class="price-num" contenteditable="true">0.490</div>
+            <div class="price-cur">KD</div>
+          </div>
+          <div class="price-unit" contenteditable="true">/ KG &nbsp;|&nbsp; لكل كيلو</div>
+        </div>
+      </div>
+      <div class="right" id="right1">
+        <div class="img-area" onclick="document.getElementById('fileProduct1').click()" title="Click to upload product image">
+          <img id="productImg1" class="product-img" src="https://pngimg.com/d/chickpea_PNG16.png" alt="product">
+          <div class="img-area-overlay">
+            <span class="img-area-icon">📦</span>
+            <span class="img-area-label">Upload Product</span>
+          </div>
+          <button class="img-remove-btn" onclick="event.stopPropagation();clearProduct('productImg1','card1')" title="Remove product">✕</button>
+          <input type="file" id="fileProduct1" class="file-input-hidden" accept="image/*" onchange="loadProduct(this,'productImg1','card1')">
+        </div>
+        <div class="made-in-badge" id="madeInBadge1">
+          <div class="made-in-flags">
+            <span class="badge-flag" id="badgeFlag1L" style="background-image:url('https://flagcdn.com/w80/ae.png')"></span>
+            <div class="made-in-text-wrap">
+              <span class="made-in-en" id="madeInEn1">Made in UAE</span>
+              <span class="made-in-ar" id="madeInAr1">صنع في الإمارات</span>
+            </div>
+            <span class="badge-flag" id="badgeFlag1R" style="background-image:url('https://flagcdn.com/w80/ae.png')"></span>
+          </div>
+        </div>
+        <label class="bg-upload-btn" title="Upload background">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          BG
+          <input type="file" class="file-input-hidden" accept="image/*" onchange="loadBg(this,'card1')">
+        </label>
+        <button class="bg-remove-btn" onclick="clearBg('card1')" title="Remove background">✕ BG</button>
+      </div>
+    </div>
+    <div class="footer-strip" id="footer1">
+      <span id="flag1L" class="flag" style="background-image:url('https://flagcdn.com/w80/ae.png')"></span>
+      <span class="footer-text" id="footerText1">Made in UAE &nbsp;|&nbsp; صنع في الإمارات</span>
+      <span id="flag1R" class="flag" style="background-image:url('https://flagcdn.com/w80/ae.png')"></span>
+      <button class="footer-change-btn" onclick="openPicker('picker1')">🌍 Country ▾</button>
+    </div>
+    <div class="country-picker-wrap" id="picker1">
+      <div class="country-picker">
+        <div class="cp-search-row">
+          <span>🔍</span>
+          <input type="text" placeholder="Search country…" oninput="filterPicker(this,'picker1')" autocomplete="off">
+          <span class="cp-close" onclick="closePicker('picker1')">✕</span>
+        </div>
+        <div class="cp-list" id="list1"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="card2">
+    <div class="card-clip"></div>
+    <div class="card-inner">
+      <div class="top-band">
+        <img src="../assets/logo.png" alt="Logo" class="brand-logo" onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+        <div class="brand-mark" style="display:none;align-items:baseline;gap:2mm;">
+          <span style="font-size:22pt;font-weight:900;color:var(--primary-brand);letter-spacing:2px;text-transform:uppercase;">MANGO</span>
+          <span style="font-size:22pt;font-weight:900;color:var(--accent-gold);letter-spacing:2px;text-transform:uppercase;">HYPER</span>
+        </div>
+        <span class="brand-tag">Quality Products</span>
+      </div>
+      <div class="gold-rule"></div>
+      <div class="left">
+        <div>
+          <div class="name-en" id="nameEn2" contenteditable="true">ITEM NAME</div>
+          <div class="name-sep"><div class="line"></div><div class="star">✦</div><div class="line"></div></div>
+          <div class="name-ar" id="nameAr2" contenteditable="true"> </div>
+          <div class="translate-status" id="ts2"></div>
+        </div>
+        <div class="price-box">
+          <div class="price-row">
+            <div class="price-num" contenteditable="true">0.000</div>
+            <div class="price-cur">KD</div>
+          </div>
+          <div class="price-unit" contenteditable="true">/ BAG &nbsp;|&nbsp; للكيس</div>
+        </div>
+      </div>
+      <div class="right" id="right2">
+        <div class="img-area" onclick="document.getElementById('fileProduct2').click()" title="Click to upload product image">
+          <img id="productImg2" class="product-img" src="" alt="product">
+          <div class="img-area-overlay">
+            <span class="img-area-icon">📦</span>
+            <span class="img-area-label">Upload Product</span>
+          </div>
+          <button class="img-remove-btn" onclick="event.stopPropagation();clearProduct('productImg2','card2')" title="Remove product">✕</button>
+          <input type="file" id="fileProduct2" class="file-input-hidden" accept="image/*" onchange="loadProduct(this,'productImg2','card2')">
+        </div>
+        <div class="made-in-badge" id="madeInBadge2">
+          <div class="made-in-flags">
+            <span class="badge-flag" id="badgeFlag2L" style="background-image:url('https://flagcdn.com/w80/in.png')"></span>
+            <div class="made-in-text-wrap">
+              <span class="made-in-en" id="madeInEn2">Made in India</span>
+              <span class="made-in-ar" id="madeInAr2">صنع في الهند</span>
+            </div>
+            <span class="badge-flag" id="badgeFlag2R" style="background-image:url('https://flagcdn.com/w80/in.png')"></span>
+          </div>
+        </div>
+        <label class="bg-upload-btn" title="Upload background">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          BG
+          <input type="file" class="file-input-hidden" accept="image/*" onchange="loadBg(this,'card2')">
+        </label>
+        <button class="bg-remove-btn" onclick="clearBg('card2')" title="Remove background">✕ BG</button>
+      </div>
+    </div>
+    <div class="footer-strip" id="footer2">
+      <span id="flag2L" class="flag" style="background-image:url('https://flagcdn.com/w80/in.png')"></span>
+      <span class="footer-text" id="footerText2">Made in India &nbsp;|&nbsp; صنع في الهند</span>
+      <span id="flag2R" class="flag" style="background-image:url('https://flagcdn.com/w80/in.png')"></span>
+      <button class="footer-change-btn" onclick="openPicker('picker2')">🌍 Country ▾</button>
+    </div>
+    <div class="country-picker-wrap" id="picker2">
+      <div class="country-picker">
+        <div class="cp-search-row">
+          <span>🔍</span>
+          <input type="text" placeholder="Search country…" oninput="filterPicker(this,'picker2')" autocomplete="off">
+          <span class="cp-close" onclick="closePicker('picker2')">✕</span>
+        </div>
+        <div class="cp-list" id="list2"></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="../js/shared.js"></script>
+<script src="../js/navbar.js"></script>
+<script>
+function initPrintFix(){
+  window.addEventListener('beforeprint',()=>document.querySelectorAll('.country-picker-wrap').forEach(p=>p.classList.remove('open')));
+}
+</script>
+
+<script>
+const COUNTRIES = [
+  /* GCC & Middle East */
+  { code:'ae', en:'UAE', ar:'الإمارات', flag: 'https://flagcdn.com/w80/ae.png' },
+  { code:'kw', en:'Kuwait', ar:'الكويت', flag: 'https://flagcdn.com/w80/kw.png' },
+  { code:'sa', en:'Saudi Arabia', ar:'السعودية', flag: 'https://flagcdn.com/w80/sa.png' },
+  { code:'eg', en:'Egypt', ar:'مصر', flag: 'https://flagcdn.com/w80/eg.png' },
+  { code:'jo', en:'Jordan', ar:'الأردن', flag: 'https://flagcdn.com/w80/jo.png' },
+  { code:'lb', en:'Lebanon', ar:'لبنان', flag: 'https://flagcdn.com/w80/lb.png' },
+  { code:'om', en:'Oman', ar:'عُمان', flag: 'https://flagcdn.com/w80/om.png' },
+  { code:'bh', en:'Bahrain', ar:'البحرين', flag: 'https://flagcdn.com/w80/bh.png' },
+  { code:'qa', en:'Qatar', ar:'قطر', flag: 'https://flagcdn.com/w80/qa.png' },
+  { code:'ps', en:'Palestine', ar:'فلسطين', flag: 'https://flagcdn.com/w80/ps.png' },
+  { code:'iq', en:'Iraq', ar:'العراق', flag: 'https://flagcdn.com/w80/iq.png' },
+  { code:'sy', en:'Syria', ar:'سوريا', flag: 'https://flagcdn.com/w80/sy.png' },
+  { code:'ye', en:'Yemen', ar:'اليمن', flag: 'https://flagcdn.com/w80/ye.png' },
+  { code:'dz', en:'Algeria', ar:'الجزائر', flag: 'https://flagcdn.com/w80/dz.png' },
+  { code:'ma', en:'Morocco', ar:'المغرب', flag: 'https://flagcdn.com/w80/ma.png' },
+  { code:'tn', en:'Tunisia', ar:'تونس', flag: 'https://flagcdn.com/w80/tn.png' },
+  { code:'ly', en:'Libya', ar:'ليبيا', flag: 'https://flagcdn.com/w80/ly.png' },
+  { code:'sd', en:'Sudan', ar:'السودان', flag: 'https://flagcdn.com/w80/sd.png' },
+  { code:'so', en:'Somalia', ar:'الصومال', flag: 'https://flagcdn.com/w80/so.png' },
+  { code:'dj', en:'Djibouti', ar:'جيبوتي', flag: 'https://flagcdn.com/w80/dj.png' },
+  { code:'mr', en:'Mauritania', ar:'موريتانيا', flag: 'https://flagcdn.com/w80/mr.png' },
+  { code:'km', en:'Comoros', ar:'جزر القمر', flag: 'https://flagcdn.com/w80/km.png' },
+  { code:'in', en:'India', ar:'الهند', flag: 'https://flagcdn.com/w80/in.png' },
+  { code:'pk', en:'Pakistan', ar:'باكستان', flag: 'https://flagcdn.com/w80/pk.png' },
+  { code:'cn', en:'China', ar:'الصين', flag: 'https://flagcdn.com/w80/cn.png' },
+  { code:'jp', en:'Japan', ar:'اليابان', flag: 'https://flagcdn.com/w80/jp.png' },
+  { code:'kr', en:'South Korea', ar:'كوريا الجنوبية', flag: 'https://flagcdn.com/w80/kr.png' },
+  { code:'kp', en:'North Korea', ar:'كوريا الشمالية', flag: 'https://flagcdn.com/w80/kp.png' },
+  { code:'ph', en:'Philippines', ar:'الفلبين', flag: 'https://flagcdn.com/w80/ph.png' },
+  { code:'th', en:'Thailand', ar:'تايلاند', flag: 'https://flagcdn.com/w80/th.png' },
+  { code:'id', en:'Indonesia', ar:'إندونيسيا', flag: 'https://flagcdn.com/w80/id.png' },
+  { code:'my', en:'Malaysia', ar:'ماليزيا', flag: 'https://flagcdn.com/w80/my.png' },
+  { code:'sg', en:'Singapore', ar:'سنغافورة', flag: 'https://flagcdn.com/w80/sg.png' },
+  { code:'vn', en:'Vietnam', ar:'فيتنام', flag: 'https://flagcdn.com/w80/vn.png' },
+  { code:'lk', en:'Sri Lanka', ar:'سريلانكا', flag: 'https://flagcdn.com/w80/lk.png' },
+  { code:'bd', en:'Bangladesh', ar:'بنغلاديش', flag: 'https://flagcdn.com/w80/bd.png' },
+  { code:'np', en:'Nepal', ar:'نيبال', flag: 'https://flagcdn.com/w80/np.png' },
+  { code:'mm', en:'Myanmar', ar:'ميانمار', flag: 'https://flagcdn.com/w80/mm.png' },
+  { code:'kh', en:'Cambodia', ar:'كمبوديا', flag: 'https://flagcdn.com/w80/kh.png' },
+  { code:'la', en:'Laos', ar:'لاوس', flag: 'https://flagcdn.com/w80/la.png' },
+  { code:'bn', en:'Brunei', ar:'بروناي', flag: 'https://flagcdn.com/w80/bn.png' },
+  { code:'mn', en:'Mongolia', ar:'منغوليا', flag: 'https://flagcdn.com/w80/mn.png' },
+  { code:'bt', en:'Bhutan', ar:'بوتان', flag: 'https://flagcdn.com/w80/bt.png' },
+  { code:'mv', en:'Maldives', ar:'المالديف', flag: 'https://flagcdn.com/w80/mv.png' },
+  { code:'af', en:'Afghanistan', ar:'أفغانستان', flag: 'https://flagcdn.com/w80/af.png' },
+  { code:'ir', en:'Iran', ar:'إيران', flag: 'https://flagcdn.com/w80/ir.png' },
+  { code:'il', en:'Israel', ar:'إسرائيل', flag: 'https://flagcdn.com/w80/il.png' },
+  { code:'tr', en:'Turkey', ar:'تركيا', flag: 'https://flagcdn.com/w80/tr.png' },
+  { code:'ge', en:'Georgia', ar:'جورجيا', flag: 'https://flagcdn.com/w80/ge.png' },
+  { code:'am', en:'Armenia', ar:'أرمينيا', flag: 'https://flagcdn.com/w80/am.png' },
+  { code:'az', en:'Azerbaijan', ar:'أذربيجان', flag: 'https://flagcdn.com/w80/az.png' },
+  { code:'kz', en:'Kazakhstan', ar:'كازاخستان', flag: 'https://flagcdn.com/w80/kz.png' },
+  { code:'uz', en:'Uzbekistan', ar:'أوزبكستان', flag: 'https://flagcdn.com/w80/uz.png' },
+  { code:'tm', en:'Turkmenistan', ar:'تركمانستان', flag: 'https://flagcdn.com/w80/tm.png' },
+  { code:'kg', en:'Kyrgyzstan', ar:'قيرغيزستان', flag: 'https://flagcdn.com/w80/kg.png' },
+  { code:'tj', en:'Tajikistan', ar:'طاجيكستان', flag: 'https://flagcdn.com/w80/tj.png' },
+  { code:'tw', en:'Taiwan', ar:'تايوان', flag: 'https://flagcdn.com/w80/tw.png' },
+  { code:'hk', en:'Hong Kong', ar:'هونغ كونغ', flag: 'https://flagcdn.com/w80/hk.png' },
+  { code:'mo', en:'Macau', ar:'ماكاو', flag: 'https://flagcdn.com/w80/mo.png' },
+  { code:'gb', en:'UK', ar:'بريطانيا', flag: 'https://flagcdn.com/w80/gb.png' },
+  { code:'de', en:'Germany', ar:'ألمانيا', flag: 'https://flagcdn.com/w80/de.png' },
+  { code:'fr', en:'France', ar:'فرنسا', flag: 'https://flagcdn.com/w80/fr.png' },
+  { code:'it', en:'Italy', ar:'إيطاليا', flag: 'https://flagcdn.com/w80/it.png' },
+  { code:'es', en:'Spain', ar:'إسبانيا', flag: 'https://flagcdn.com/w80/es.png' },
+  { code:'pt', en:'Portugal', ar:'البرتغال', flag: 'https://flagcdn.com/w80/pt.png' },
+  { code:'ru', en:'Russia', ar:'روسيا', flag: 'https://flagcdn.com/w80/ru.png' },
+  { code:'nl', en:'Netherlands', ar:'هولندا', flag: 'https://flagcdn.com/w80/nl.png' },
+  { code:'be', en:'Belgium', ar:'بلجيكا', flag: 'https://flagcdn.com/w80/be.png' },
+  { code:'ch', en:'Switzerland', ar:'سويسرا', flag: 'https://flagcdn.com/w80/ch.png' },
+  { code:'at', en:'Austria', ar:'النمسا', flag: 'https://flagcdn.com/w80/at.png' },
+  { code:'se', en:'Sweden', ar:'السويد', flag: 'https://flagcdn.com/w80/se.png' },
+  { code:'no', en:'Norway', ar:'النرويج', flag: 'https://flagcdn.com/w80/no.png' },
+  { code:'dk', en:'Denmark', ar:'الدنمارك', flag: 'https://flagcdn.com/w80/dk.png' },
+  { code:'fi', en:'Finland', ar:'فنلندا', flag: 'https://flagcdn.com/w80/fi.png' },
+  { code:'ie', en:'Ireland', ar:'أيرلندا', flag: 'https://flagcdn.com/w80/ie.png' },
+  { code:'pl', en:'Poland', ar:'بولندا', flag: 'https://flagcdn.com/w80/pl.png' },
+  { code:'gr', en:'Greece', ar:'اليونان', flag: 'https://flagcdn.com/w80/gr.png' },
+  { code:'cz', en:'Czech Republic', ar:'التشيك', flag: 'https://flagcdn.com/w80/cz.png' },
+  { code:'hu', en:'Hungary', ar:'المجر', flag: 'https://flagcdn.com/w80/hu.png' },
+  { code:'ro', en:'Romania', ar:'رومانيا', flag: 'https://flagcdn.com/w80/ro.png' },
+  { code:'bg', en:'Bulgaria', ar:'بلغاريا', flag: 'https://flagcdn.com/w80/bg.png' },
+  { code:'hr', en:'Croatia', ar:'كرواتيا', flag: 'https://flagcdn.com/w80/hr.png' },
+  { code:'rs', en:'Serbia', ar:'صربيا', flag: 'https://flagcdn.com/w80/rs.png' },
+  { code:'sk', en:'Slovakia', ar:'سلوفاكيا', flag: 'https://flagcdn.com/w80/sk.png' },
+  { code:'si', en:'Slovenia', ar:'سلوفينيا', flag: 'https://flagcdn.com/w80/si.png' },
+  { code:'ua', en:'Ukraine', ar:'أوكرانيا', flag: 'https://flagcdn.com/w80/ua.png' },
+  { code:'by', en:'Belarus', ar:'بيلاروسيا', flag: 'https://flagcdn.com/w80/by.png' },
+  { code:'md', en:'Moldova', ar:'مولدوفا', flag: 'https://flagcdn.com/w80/md.png' },
+  { code:'lt', en:'Lithuania', ar:'ليتوانيا', flag: 'https://flagcdn.com/w80/lt.png' },
+  { code:'lv', en:'Latvia', ar:'لاتفيا', flag: 'https://flagcdn.com/w80/lv.png' },
+  { code:'ee', en:'Estonia', ar:'إستونيا', flag: 'https://flagcdn.com/w80/ee.png' },
+  { code:'is', en:'Iceland', ar:'آيسلندا', flag: 'https://flagcdn.com/w80/is.png' },
+  { code:'lu', en:'Luxembourg', ar:'لوكسمبورغ', flag: 'https://flagcdn.com/w80/lu.png' },
+  { code:'mt', en:'Malta', ar:'مالطا', flag: 'https://flagcdn.com/w80/mt.png' },
+  { code:'cy', en:'Cyprus', ar:'قبرص', flag: 'https://flagcdn.com/w80/cy.png' },
+  { code:'al', en:'Albania', ar:'ألبانيا', flag: 'https://flagcdn.com/w80/al.png' },
+  { code:'mk', en:'North Macedonia', ar:'مقدونيا الشمالية', flag: 'https://flagcdn.com/w80/mk.png' },
+  { code:'me', en:'Montenegro', ar:'الجبل الأسود', flag: 'https://flagcdn.com/w80/me.png' },
+  { code:'ba', en:'Bosnia and Herzegovina', ar:'البوسنة والهرسك', flag: 'https://flagcdn.com/w80/ba.png' },
+  { code:'xk', en:'Kosovo', ar:'كوسوفو', flag: 'https://flagcdn.com/w80/xk.png' },
+  { code:'us', en:'USA', ar:'أمريكا', flag: 'https://flagcdn.com/w80/us.png' },
+  { code:'ca', en:'Canada', ar:'كندا', flag: 'https://flagcdn.com/w80/ca.png' },
+  { code:'mx', en:'Mexico', ar:'المكسيك', flag: 'https://flagcdn.com/w80/mx.png' },
+  { code:'br', en:'Brazil', ar:'البرازيل', flag: 'https://flagcdn.com/w80/br.png' },
+  { code:'ar', en:'Argentina', ar:'الأرجنتين', flag: 'https://flagcdn.com/w80/ar.png' },
+  { code:'cl', en:'Chile', ar:'تشيلي', flag: 'https://flagcdn.com/w80/cl.png' },
+  { code:'co', en:'Colombia', ar:'كولومبيا', flag: 'https://flagcdn.com/w80/co.png' },
+  { code:'pe', en:'Peru', ar:'بيرو', flag: 'https://flagcdn.com/w80/pe.png' },
+  { code:'ve', en:'Venezuela', ar:'فنزويلا', flag: 'https://flagcdn.com/w80/ve.png' },
+  { code:'ec', en:'Ecuador', ar:'الإكوادور', flag: 'https://flagcdn.com/w80/ec.png' },
+  { code:'bo', en:'Bolivia', ar:'بوليفيا', flag: 'https://flagcdn.com/w80/bo.png' },
+  { code:'py', en:'Paraguay', ar:'باراغواي', flag: 'https://flagcdn.com/w80/py.png' },
+  { code:'uy', en:'Uruguay', ar:'الأوروغواي', flag: 'https://flagcdn.com/w80/uy.png' },
+  { code:'cr', en:'Costa Rica', ar:'كوستاريكا', flag: 'https://flagcdn.com/w80/cr.png' },
+  { code:'pa', en:'Panama', ar:'بنما', flag: 'https://flagcdn.com/w80/pa.png' },
+  { code:'do', en:'Dominican Republic', ar:'جمهورية الدومينيكان', flag: 'https://flagcdn.com/w80/do.png' },
+  { code:'cu', en:'Cuba', ar:'كوبا', flag: 'https://flagcdn.com/w80/cu.png' },
+  { code:'gt', en:'Guatemala', ar:'غواتيمالا', flag: 'https://flagcdn.com/w80/gt.png' },
+  { code:'hn', en:'Honduras', ar:'هندوراس', flag: 'https://flagcdn.com/w80/hn.png' },
+  { code:'ni', en:'Nicaragua', ar:'نيكاراغوا', flag: 'https://flagcdn.com/w80/ni.png' },
+  { code:'sv', en:'El Salvador', ar:'السلفادور', flag: 'https://flagcdn.com/w80/sv.png' },
+  { code:'jm', en:'Jamaica', ar:'جامايكا', flag: 'https://flagcdn.com/w80/jm.png' },
+  { code:'au', en:'Australia', ar:'أستراليا', flag: 'https://flagcdn.com/w80/au.png' },
+  { code:'nz', en:'New Zealand', ar:'نيوزيلندا', flag: 'https://flagcdn.com/w80/nz.png' },
+  { code:'fj', en:'Fiji', ar:'فيجي', flag: 'https://flagcdn.com/w80/fj.png' },
+  { code:'pg', en:'Papua New Guinea', ar:'بابوا غينيا الجديدة', flag: 'https://flagcdn.com/w80/pg.png' },
+  { code:'za', en:'South Africa', ar:'جنوب أفريقيا', flag: 'https://flagcdn.com/w80/za.png' },
+  { code:'ng', en:'Nigeria', ar:'نيجيريا', flag: 'https://flagcdn.com/w80/ng.png' },
+  { code:'ke', en:'Kenya', ar:'كينيا', flag: 'https://flagcdn.com/w80/ke.png' },
+  { code:'et', en:'Ethiopia', ar:'إثيوبيا', flag: 'https://flagcdn.com/w80/et.png' },
+  { code:'gh', en:'Ghana', ar:'غانا', flag: 'https://flagcdn.com/w80/gh.png' },
+  { code:'tz', en:'Tanzania', ar:'تنزانيا', flag: 'https://flagcdn.com/w80/tz.png' },
+  { code:'ug', en:'Uganda', ar:'أوغندا', flag: 'https://flagcdn.com/w80/ug.png' },
+  { code:'rw', en:'Rwanda', ar:'رواندا', flag: 'https://flagcdn.com/w80/rw.png' },
+  { code:'zm', en:'Zambia', ar:'زامبيا', flag: 'https://flagcdn.com/w80/zm.png' },
+  { code:'zw', en:'Zimbabwe', ar:'زيمبابوي', flag: 'https://flagcdn.com/w80/zw.png' },
+  { code:'mz', en:'Mozambique', ar:'موزمبيق', flag: 'https://flagcdn.com/w80/mz.png' },
+  { code:'ao', en:'Angola', ar:'أنغولا', flag: 'https://flagcdn.com/w80/ao.png' },
+  { code:'cm', en:'Cameroon', ar:'الكاميرون', flag: 'https://flagcdn.com/w80/cm.png' },
+  { code:'sn', en:'Senegal', ar:'السنغال', flag: 'https://flagcdn.com/w80/sn.png' },
+  { code:'ci', en:'Ivory Coast', ar:'ساحل العاج', flag: 'https://flagcdn.com/w80/ci.png' },
+  { code:'ml', en:'Mali', ar:'مالي', flag: 'https://flagcdn.com/w80/ml.png' },
+  { code:'ne', en:'Niger', ar:'النيجر', flag: 'https://flagcdn.com/w80/ne.png' },
+  { code:'bf', en:'Burkina Faso', ar:'بوركينا فاسو', flag: 'https://flagcdn.com/w80/bf.png' },
+  { code:'td', en:'Chad', ar:'تشاد', flag: 'https://flagcdn.com/w80/td.png' },
+  { code:'cd', en:'DR Congo', ar:'الكونغو الديمقراطية', flag: 'https://flagcdn.com/w80/cd.png' },
+  { code:'cg', en:'Congo', ar:'الكونغو', flag: 'https://flagcdn.com/w80/cg.png' },
+  { code:'ga', en:'Gabon', ar:'الغابون', flag: 'https://flagcdn.com/w80/ga.png' },
+  { code:'bw', en:'Botswana', ar:'بوتسوانا', flag: 'https://flagcdn.com/w80/bw.png' },
+  { code:'na', en:'Namibia', ar:'ناميبيا', flag: 'https://flagcdn.com/w80/na.png' },
+  { code:'mg', en:'Madagascar', ar:'مدغشقر', flag: 'https://flagcdn.com/w80/mg.png' },
+  { code:'mu', en:'Mauritius', ar:'موريشيوس', flag: 'https://flagcdn.com/w80/mu.png' },
+  { code:'sc', en:'Seychelles', ar:'سيشيل', flag: 'https://flagcdn.com/w80/sc.png' },
+  { code:'bj', en:'Benin', ar:'بنين', flag: 'https://flagcdn.com/w80/bj.png' },
+  { code:'tg', en:'Togo', ar:'توغو', flag: 'https://flagcdn.com/w80/tg.png' },
+  { code:'gm', en:'Gambia', ar:'غامبيا', flag: 'https://flagcdn.com/w80/gm.png' },
+  { code:'gn', en:'Guinea', ar:'غينيا', flag: 'https://flagcdn.com/w80/gn.png' },
+  { code:'sl', en:'Sierra Leone', ar:'سيراليون', flag: 'https://flagcdn.com/w80/sl.png' },
+  { code:'lr', en:'Liberia', ar:'ليبيريا', flag: 'https://flagcdn.com/w80/lr.png' },
+  { code:'er', en:'Eritrea', ar:'إريتريا', flag: 'https://flagcdn.com/w80/er.png' },
+  { code:'ss', en:'South Sudan', ar:'جنوب السودان', flag: 'https://flagcdn.com/w80/ss.png' },
+  { code:'mw', en:'Malawi', ar:'مالاوي', flag: 'https://flagcdn.com/w80/mw.png' },
+  { code:'ls', en:'Lesotho', ar:'ليسوتو', flag: 'https://flagcdn.com/w80/ls.png' },
+  { code:'sz', en:'Eswatini', ar:'إسواتيني', flag: 'https://flagcdn.com/w80/sz.png' }
+];
+
+function madeInAr(ar){ return 'صنع في ' + ar; }
+function madeInEn(en){ return 'Made in ' + en; }
+
+function renderList(listEl, pickerId, filter=''){
+  const q = filter.toLowerCase();
+  const filtered = COUNTRIES.filter(c =>
+    c.en.toLowerCase().includes(q) || c.ar.includes(q)
+  );
+  listEl.innerHTML = filtered.map(c => `
+    <div class="cp-item" onclick="selectCountry('${pickerId}','${c.code}')">
+      <img src="${c.flag}" class="cp-flag-img">
+      <span class="cp-name">${c.en}</span>
+      <span class="cp-ar">${c.ar}</span>
+    </div>
+  `).join('');
+}
+
+function openPicker(pickerId){
+  document.querySelectorAll('.country-picker-wrap').forEach(p=>p.classList.remove('open'));
+  const wrap = document.getElementById(pickerId);
+  wrap.classList.add('open');
+  const listEl = wrap.querySelector('.cp-list');
+  renderList(listEl, pickerId);
+  const inp = wrap.querySelector('input');
+  inp.value = ''; inp.focus();
+}
+
+function closePicker(pickerId){
+  document.getElementById(pickerId).classList.remove('open');
+}
+
+function filterPicker(inputEl, pickerId){
+  const wrap = document.getElementById(pickerId);
+  const listEl = wrap.querySelector('.cp-list');
+  renderList(listEl, pickerId, inputEl.value);
+}
+
+function selectCountry(pickerId, code){
+  const c = COUNTRIES.find(x=>x.code===code);
+  if(!c) return;
+  const num = pickerId.replace('picker','');
+  document.getElementById('footerText'+num).innerHTML = madeInEn(c.en) + ' &nbsp;|&nbsp; ' + madeInAr(c.ar);
+  
+  // Update Real Flag background
+  const flagL = document.getElementById('flag'+num+'L');
+  const flagR = document.getElementById('flag'+num+'R');
+  [flagL, flagR].forEach(f => {
+    f.style.backgroundImage = `url('${c.flag}')`;
+  });
+
+  // Sync new badge elements
+  const bfl = document.getElementById('badgeFlag'+num+'L');
+  const bfr = document.getElementById('badgeFlag'+num+'R');
+  if(bfl) bfl.style.backgroundImage = `url('${c.flag}')`;
+  if(bfr) bfr.style.backgroundImage = `url('${c.flag}')`;
+  const ben = document.getElementById('madeInEn'+num);
+  const bar = document.getElementById('madeInAr'+num);
+  if(ben) ben.textContent = madeInEn(c.en);
+  if(bar) bar.textContent = madeInAr(c.ar);
+
+  closePicker(pickerId);
+}
+
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.country-picker-wrap') && !e.target.closest('.footer-change-btn')){
+    document.querySelectorAll('.country-picker-wrap').forEach(p=>p.classList.remove('open'));
+  }
+});
+
+/* ── Image dropdown ── */
+function toggleMenu(id){
+  const m=document.getElementById(id);
+  const isOpen=m.classList.contains('open');
+  document.querySelectorAll('.img-menu-wrap').forEach(el=>el.classList.remove('open'));
+  if(!isOpen) m.classList.add('open');
+}
+
+/* ── UPDATED FOR DUAL IMAGE SYNC ── */
+function loadProduct(input, imgId, cardId){
+  const f=input.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const dataUrl = ev.target.result;
+    // 1. Assign to the standalone product view
+    document.getElementById(imgId).src = dataUrl;
+    
+    // 2. Assign same source to background and trigger the light screen mask
+    const c = document.getElementById(cardId);
+    c.style.backgroundImage = `url('${dataUrl}')`;
+    c.classList.add('has-bg');
+  };
+  r.readAsDataURL(f);
+}
+
+function loadBg(input,cardId){
+  const f=input.files[0]; if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{
+    const c=document.getElementById(cardId);
+    c.style.backgroundImage=`url('${ev.target.result}')`;
+    c.classList.add('has-bg');
+  };
+  r.readAsDataURL(f);
+}
+
+function clearProduct(imgId, cardId){
+  document.getElementById(imgId).src='';
+  if(cardId) {
+    clearBg(cardId);
+  }
+}
+
+function clearBg(cardId){
+  const c=document.getElementById(cardId);
+  c.style.backgroundImage=''; 
+  c.classList.remove('has-bg');
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  bindAutoTranslate('nameEn1','nameAr1','ts1');
+  bindAutoTranslate('nameEn2','nameAr2','ts2');
+  initPrintFix();
+});
+</script>
+</body>
+</html>
