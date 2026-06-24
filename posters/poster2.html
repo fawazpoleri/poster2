@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poster 2 – Red Offer | Mango Poster</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#111111">
+<style>
+:root{--primary:#c50303;--accent:#ffcc00;--green:#259dad}
+body{font-family:'DM Sans',sans-serif}
+
+.header{height:220px;background:var(--primary);padding:40px 50px;color:#fff;
+  clip-path:polygon(0 0,100% 0,100% 70%,0 100%);display:flex;
+  justify-content:space-between;align-items:flex-start;flex-shrink:0}
+.header-headline .big{font-size:70px;font-weight:900;display:block;line-height:.9}
+.header-headline .sub{font-size:40px;color:var(--accent);font-weight:900}
+
+.promo-badge{background:#fff;padding:15px;width:140px;height:80px;border-radius:0 0 20px 20px;
+  box-shadow:0 10px 20px rgba(0,0,0,.1);display:flex;align-items:center;justify-content:center}
+.promo-badge img{max-width:100%;max-height:100%;object-fit:contain}
+
+.main-content{flex:1;display:flex;flex-direction:column;align-items:center;
+  padding:0 50px;margin-top:-60px}
+
+.image-frame{width:100%;flex:1;min-height:300px;max-height:450px;background:#fff;
+  border-radius:30px;display:flex;justify-content:center;align-items:center;
+  position:relative;box-shadow:0 20px 40px rgba(0,0,0,.1);overflow:hidden}
+.image-frame img{max-width:90%;max-height:90%;object-fit:contain}
+.image-frame .upload-btn{position:absolute;top:50%;left:50%;
+  transform:translate(-50%,-50%);font-size:16px;padding:10px 24px}
+
+.product-titles{text-align:center;margin:20px 0;width:100%}
+.en-title,.ar-title{display:block;width:100%;font-weight:900;margin:5px 0;
+  line-height:1.2;overflow:hidden;max-height:160px}
+.en-title{color:#212121;text-transform:uppercase;font-size:80px}
+.ar-title{color:#666;direction:rtl;font-size:42px}
+
+.price-section{display:flex;flex-direction:column;align-items:center;margin-bottom:40px}
+.now-box{background:linear-gradient(135deg,#ffcc00,#ff9900);padding:20px 60px;
+  border-radius:25px;box-shadow:0 12px 25px rgba(0,0,0,.25);display:flex;align-items:baseline}
+.now-box .currency{font-size:32px;font-weight:900;margin-right:10px}
+.now-box .amount{font-size:110px;font-weight:900;line-height:.9;
+  letter-spacing:-3px;text-shadow:0 5px 15px rgba(0,0,0,.3)}
+
+.footer {
+    height:100px;
+    background:var(--green);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    font-weight:700;
+    clip-path:polygon(0 30%,100% 0,100% 100%,0 100%);
+    flex-shrink:0;
+    pointer-events:none;
+    cursor:default;
+    user-select:none;
+    -webkit-user-select:none;
+}
+/* Suppress the [contenteditable]:hover rule from base.css on the footer */
+.footer:hover,
+.footer:focus,
+.footer[contenteditable]:hover,
+.footer[contenteditable]:focus {
+    background:var(--green) !important;
+    outline:none !important;
+    box-shadow:none !important;
+    border-radius:0 !important;
+}
+
+/* Remove hover highlight on ALL editable fields in this poster */
+</style>
+</head>
+<body>
+<div class="a4-page">
+  <header class="header">
+    <div class="header-headline">
+      <span class="big" contenteditable="true">SUPER</span>
+      <span class="sub" contenteditable="true">OFFER</span>
+    </div>
+    <div class="promo-badge"><img src="../assets/logo.png" alt="Logo"></div>
+  </header>
+
+  <div class="main-content">
+    <div class="image-frame" id="imgFrame">
+      <label class="upload-btn" id="upBtn" for="fileInput">ADD IMAGE</label>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+      <img id="previewImage" src="" alt="">
+    </div>
+    <div class="product-titles">
+      <div class="en-title" id="p2-en" contenteditable="true">PRODUCT NAME</div>
+      <div class="ar-title" id="p2-ar" contenteditable="true">اسم العنصر</div>
+    </div>
+    <div class="price-section">
+      <div class="now-box">
+        <span class="currency">KD</span>
+        <span class="amount" contenteditable="true">0.000</span>
+      </div>
+    </div>
+  </div>
+  <footer class="footer" contenteditable="true">VALID UNTIL:</footer>
+</div>
+
+<script src="../js/shared.js"></script>
+<script src="../js/navbar.js"></script>
+<script>
+const fileInput = document.getElementById('fileInput');
+const preview   = document.getElementById('previewImage');
+const upBtn     = document.getElementById('upBtn');
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) { preview.src = URL.createObjectURL(fileInput.files[0]); upBtn.style.display = 'none'; }
+});
+
+const enTitle = document.getElementById('p2-en');
+const arTitle = document.getElementById('p2-ar');
+function adj() { autoShrink(enTitle, 80, 28); autoShrink(arTitle, 42, 20); }
+
+// enTitle: adj runs via its own listener; bindAutoTranslate adds a separate 'input' listener (no duplicate needed)
+enTitle.addEventListener('input', adj);
+// arTitle: resize on manual Arabic edits
+arTitle.addEventListener('input', adj);
+window.addEventListener('load', adj);
+
+// Auto-translate en → ar
+bindAutoTranslate('p2-en', 'p2-ar');
+// Re-run sizing after translation updates arTitle's content
+new MutationObserver(adj).observe(arTitle, { childList: true, characterData: true, subtree: true });
+</script>
+<script>if("serviceWorker"in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{});</script>
+</body>
+</html>

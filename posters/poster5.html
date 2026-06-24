@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Poster 5 – 2 Per Page </title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/base.css">
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#111111">
+<style>
+:root{--primary:#c62828;--dark:#0f172a;--accent:#facc15;--white:#fff}
+body{background:#334155;font-family:'Inter',sans-serif;margin:0;padding:0}
+
+/* Top control actions (Hidden on print) */
+.control-panel {
+  max-width: 210mm;
+  margin: 20px auto 0 auto;
+  display: flex;
+  justify-content: flex-end;
+}
+.add-poster-btn {
+  background: var(--accent);
+  color: var(--dark);
+  border: none;
+  padding: 8px 16px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+.add-poster-btn:hover {
+  background: #fde047;
+}
+
+/* Exact original template sizing dimensions */
+.page-container{width:210mm;height:297mm;background:#f8fafc;margin:20px auto;position:relative;display:flex;flex-direction:column;box-shadow:0 25px 50px -12px rgba(0,0,0,.5);box-sizing:border-box}
+
+.cut-line{position:absolute;top:50%;left:0;width:100%;border-top:2px dashed #94a3b8;z-index:10;pointer-events:none}
+
+.item-half{height:50%;position:relative;display:flex;flex-direction:column;padding:30px 40px;overflow:hidden;box-sizing:border-box}
+.item-half::before{content:'';position:absolute;top:-10%;right:-5%;width:35%;height:120%;background:var(--primary);transform:rotate(10deg);z-index:1}
+
+.header{position:relative;z-index:2;margin-bottom:15px;display:flex;flex-direction:column;align-items:flex-start}
+.brand-logo img{max-height:55px;max-width:220px;object-fit:contain;display:block}
+.sub-brand{font-weight:700;font-size:0.9rem;color:var(--primary);text-transform:uppercase;letter-spacing:2px;margin-top:5px}
+
+.main-content{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center;max-width:60%;height:calc(100% - 120px)}
+.text-details{display:flex;flex-direction:column;gap:10px;width:100%;overflow:hidden}
+
+/* Auto-fit container constraints matching original font rules */
+.product-name-box{width:100%;height:110px;display:flex;align-items:center;overflow:hidden}
+.product-name{font-size:4.5rem;font-weight:900;line-height:0.95;color:var(--dark);text-transform:uppercase;word-wrap:break-word;width:100%;max-height:100%;overflow:hidden;white-space:normal}
+
+.product-ar-box{width:100%;height:65px;display:flex;align-items:center;direction:rtl;overflow:hidden}
+.product-ar{font-size:2.8rem;font-weight:700;line-height:1.1;color:#64748b;width:100%;max-height:100%;overflow:hidden;white-space:normal}
+
+/* Right panel holding Image Upload strictly above the pricing badge */
+.right-aside-panel{position:absolute;right:40px;top:40px;bottom:50px;width:240px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:15px;z-index:3}
+
+.image-uploader{width:275px;height:240px;border:none;background:transparent;border-radius:12px;position:relative;cursor:pointer;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:all 0.2s ease;flex-shrink:0}
+.image-uploader:hover{background:rgba(0,0,0,0.04)}
+.image-uploader img{width:100%;height:100%;object-fit:contain;position:absolute;top:0;left:0;z-index:2}
+.upload-placeholder{text-align:center;color:#94a3b8;font-size:0.8rem;font-weight:600;padding:10px;z-index:1;line-height:1.5}
+.upload-placeholder .upload-icon{font-size:2rem;display:block;margin-bottom:6px;opacity:0.5}
+/* Replace overlay — shown on hover when image is loaded */
+.replace-overlay{position:absolute;inset:0;background:rgba(15,23,42,0.55);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;opacity:0;transition:opacity 0.2s ease;z-index:3;pointer-events:none}
+.replace-overlay span{color:#fff;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:1px}
+.replace-overlay .replace-icon{font-size:1.4rem}
+.image-uploader.has-image:hover .replace-overlay{opacity:1}
+.hidden-input{display:none}
+
+/* Price Badge Circle - Enhanced with layer drop shadow effects */
+.price-circle{
+  width:220px;
+  height:220px;
+  background:var(--white);
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border:8px solid var(--accent);
+  transform:rotate(-5deg);
+  box-sizing:border-box;
+  padding:10px;
+  flex-shrink:0;
+  /* Premium dual layer drop shadow effect */
+  box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.35), 0 8px 10px -6px rgba(0, 0, 0, 0.25);
+}
+.price-circle .kd{font-size:1.5rem;font-weight:900;color:var(--primary);margin-bottom:2px}
+
+.price-container{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;overflow:hidden}
+.price-en-box{width:100%;height:65px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.price-en{font-size:4rem;font-weight:900;color:var(--dark);line-height:1;letter-spacing:-2px;white-space:nowrap;display:inline-block}
+.price-ar{font-size:2.4rem;font-weight:700;color:#475569;line-height:1;margin-top:2px;display:inline-block}
+
+.footer{position:relative;z-index:2;border-top:4px solid var(--dark);padding-top:12px;display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+.footer span{font-weight:800;font-size:1.1rem;text-transform:uppercase;color:var(--dark)}
+.tagline{background:var(--dark);color:var(--white);padding:4px 12px;border-radius:4px}
+
+[contenteditable]:focus{outline:none;background:rgba(250,204,21,.15);border-radius:4px}
+
+@media print {
+  .control-panel { display: none !important; }
+  body { background: transparent !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; color-adjust: exact !important; }
+  .page-container { margin: 0 !important; box-shadow: none !important; page-break-after: always !important; width: 210mm !important; height: 297mm !important; display: flex !important; flex-direction: column !important; }
+  .item-half { height: 50% !important; position: relative !important; overflow: hidden !important; }
+  .item-half::before { content: '' !important; position: absolute !important; top: -10% !important; right: -5% !important; width: 35% !important; height: 120% !important; background: #c62828 !important; transform: rotate(10deg) !important; z-index: 1 !important; display: block !important; }
+  .right-aside-panel { position: absolute !important; right: 40px !important; top: 40px !important; bottom: 50px !important; width: 240px !important; display: flex !important; flex-direction: column !important; align-items: center !important; justify-content: flex-end !important; gap: 15px !important; z-index: 3 !important; }
+  .image-uploader {
+    width: 260px !important;
+    height: 230px !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    display: flex !important;
+    position: relative !important;
+    overflow: hidden !important;
+  }
+  .image-uploader.has-image { border: none !important; }
+  .image-uploader img { width: 100% !important; height: 100% !important; object-fit: contain !important; position: absolute !important; top: 0 !important; left: 0 !important; z-index: 2 !important; display: block !important; }
+  .price-circle { background: #fff !important; border: 8px solid #facc15 !important; box-shadow: 0 15px 25px -5px rgba(0,0,0,0.35) !important; display: flex !important; }
+  .replace-overlay { display: none !important; }
+  .upload-placeholder { display: none !important; }
+  .footer { border-top: 4px solid #0f172a !important; }
+  .cut-line { border-top: 2px dashed #94a3b8 !important; }
+}
+</style>
+</head>
+<body>
+
+<div class="control-panel">
+  <button class="add-poster-btn" onclick="addNewItemHalf()">+ Add Item</button>
+</div>
+
+<div id="poster-pages-container">
+  <div class="page-container" id="container-1">
+    <div class="cut-line"></div>
+
+    <section class="item-half" id="item-panel-1">
+      <div class="header">
+        <div class="brand-logo"><img src="../assets/logo.png" alt="Logo"></div>
+      </div>
+      
+      <div class="main-content">
+        <div class="text-details">
+          <div class="product-name-box">
+            <div class="product-name" id="p5-1-en" contenteditable="true">ITEM NAME</div>
+          </div>
+          <div class="product-ar-box">
+            <div class="product-ar" id="p5-1-ar" contenteditable="true">الاسم باللغة العربية</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-aside-panel">
+        <div class="image-uploader" onclick="triggerUpload(this)">
+          <div class="upload-placeholder"><span class="upload-icon">🖼️</span>+ Upload Image</div>
+          <div class="replace-overlay"><span class="replace-icon">🔄</span><span>Replace</span></div>
+          <input type="file" class="hidden-input" accept="image/*" onchange="previewImage(event, this)">
+        </div>
+
+        <div class="price-circle">
+          <span class="kd">KD</span>
+          <div class="price-container">
+            <div class="price-en-box">
+              <span class="price-en" id="p5-1-price-en" contenteditable="true" oninput="syncArabicPrice(this, 'p5-1-price-ar')">0.000</span>
+            </div>
+            <span class="price-ar" id="p5-1-price-ar">٠.٠٠٠</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <span contenteditable="true">Valid Until:   __/__/2026</span> 
+      </div>
+    </section>
+  </div>
+</div>
+
+<script src="../js/shared.js"></script>
+<script src="../js/navbar.js"></script>
+<script>
+let totalItemsCount = 1;
+
+function initPosterListeners(index) {
+  if (typeof bindAutoTranslate === 'function') {
+    bindAutoTranslate(`p5-${index}-en`, `p5-${index}-ar`);
+  }
+
+  const enInput = document.getElementById(`p5-${index}-en`);
+  if (enInput) {
+    enInput.addEventListener('blur', () => {
+      enInput.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    enInput.addEventListener('input', () => autoFitText(enInput, 72));
+    autoFitText(enInput, 72);
+  }
+
+  const arInput = document.getElementById(`p5-${index}-ar`);
+  if (arInput) {
+    arInput.addEventListener('input', () => autoFitText(arInput, 44));
+    autoFitText(arInput, 44);
+  }
+  
+  const priceInput = document.getElementById(`p5-${index}-price-en`);
+  if (priceInput) {
+    autoFitText(priceInput, 64);
+  }
+}
+
+function addNewItemHalf() {
+  totalItemsCount++;
+
+  const mainWrapper = document.getElementById('poster-pages-container');
+
+  // Find the last page container and check how many items it already holds
+  let allContainers = mainWrapper.querySelectorAll('.page-container');
+  let parentContainer = allContainers[allContainers.length - 1];
+
+  if (!parentContainer || parentContainer.querySelectorAll('.item-half').length >= 2) {
+    // Last container is full (or doesn't exist) — create a fresh one
+    const newId = allContainers.length + 1;
+    parentContainer = document.createElement('div');
+    parentContainer.className = 'page-container';
+    parentContainer.id = `container-${newId}`;
+    parentContainer.innerHTML = '<div class="cut-line"></div>';
+    mainWrapper.appendChild(parentContainer);
+  }
+
+  const itemSection = document.createElement('section');
+  itemSection.className = 'item-half';
+  itemSection.id = `item-panel-${totalItemsCount}`;
+  itemSection.innerHTML = `
+    <div class="header">
+      <div class="brand-logo"><img src="../assets/logo.png" alt="Logo"></div>
+    </div>
+    
+    <div class="main-content">
+      <div class="text-details">
+        <div class="product-name-box">
+          <div class="product-name" id="p5-${totalItemsCount}-en" contenteditable="true">ITEM NAME</div>
+        </div>
+        <div class="product-ar-box">
+          <div class="product-ar" id="p5-${totalItemsCount}-ar" contenteditable="true">الاسم باللغة العربية</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="right-aside-panel">
+      <div class="image-uploader" onclick="triggerUpload(this)">
+        <div class="upload-placeholder"><span class="upload-icon">🖼️</span>+ Upload Image</div>
+        <div class="replace-overlay"><span class="replace-icon">🔄</span><span>Replace</span></div>
+        <input type="file" class="hidden-input" accept="image/*" onchange="previewImage(event, this)">
+      </div>
+
+      <div class="price-circle">
+        <span class="kd">KD</span>
+        <div class="price-container">
+          <div class="price-en-box">
+            <span class="price-en" id="p5-${totalItemsCount}-price-en" contenteditable="true" oninput="syncArabicPrice(this, 'p5-${totalItemsCount}-price-ar')">0.000</span>
+          </div>
+          <span class="price-ar" id="p5-${totalItemsCount}-price-ar">٠.٠٠٠</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      <span contenteditable="true">Valid Until:</span>
+    </div>
+  `;
+
+  parentContainer.appendChild(itemSection);
+  initPosterListeners(totalItemsCount);
+}
+
+function triggerUpload(container) {
+  container.querySelector('.hidden-input').click();
+}
+
+function previewImage(event, inputElement) {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    const container = inputElement.parentElement;
+    reader.onload = function(e) {
+      let img = container.querySelector('img');
+      if (!img) {
+        img = document.createElement('img');
+        container.appendChild(img);
+      }
+      img.src = e.target.result;
+      container.querySelector('.upload-placeholder').style.display = 'none';
+      container.classList.add('has-image');
+    }
+    reader.readAsDataURL(file);
+  }
+}
+
+function syncArabicPrice(englishInput, arabicId) {
+  const englishDigits = ['0','1','2','3','4','5','6','7','8','9','.'];
+  const arabicDigits  = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩','٫'];
+  
+  let currentVal = englishInput.innerText;
+  let converted = '';
+  
+  for (let i = 0; i < currentVal.length; i++) {
+    let index = englishDigits.indexOf(currentVal[i]);
+    converted += (index !== -1) ? arabicDigits[index] : currentVal[i];
+  }
+  
+  document.getElementById(arabicId).innerText = converted || '٠.٠٠٠';
+  autoFitText(englishInput, 64); 
+}
+
+function autoFitText(element, maxFontSize) {
+  let parent = element.parentElement;
+  if (!parent) return;
+  let size = maxFontSize;
+  element.style.fontSize = size + 'px';
+  
+  while ((element.scrollHeight > parent.clientHeight || element.scrollWidth > parent.clientWidth) && size > 12) {
+    size -= 1;
+    element.style.fontSize = size + 'px';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    initPosterListeners(1);
+  }, 100);
+});
+</script>
+<script>if("serviceWorker"in navigator)navigator.serviceWorker.register("../sw.js").catch(()=>{});</script>
+</body>
+</html>
